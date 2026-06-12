@@ -8,6 +8,15 @@ import type {
   EndSessionResponse,
 } from '@wordrosco/types'
 
+export interface LeaderboardEntry {
+  rank: number
+  displayName: string
+  level: string
+  correctCount: number
+  wrongCount: number
+  timeUsedSec: number
+}
+
 export const gameApi = {
   startSession: async (data: StartSessionRequest): Promise<StartSessionResponse> => {
     const res = await api.post<StartSessionResponse>('/game/sessions', data)
@@ -31,6 +40,11 @@ export const gameApi = {
 
   endSession: async (sessionId: string): Promise<EndSessionResponse> => {
     const res = await api.post<EndSessionResponse>(`/game/sessions/${sessionId}/end`)
+    return res.data
+  },
+
+  getLeaderboard: async (): Promise<LeaderboardEntry[]> => {
+    const res = await api.get<LeaderboardEntry[]>('/game/leaderboard')
     return res.data
   },
 }

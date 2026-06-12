@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { gameApi } from '@/api/game'
 import { useAuthStore } from '@/store/authStore'
 import { useGameStore } from '@/store/gameStore'
@@ -16,7 +16,6 @@ const LEVELS: { id: Level; name: string; time: string }[] = [
   { id: 'C2', name: 'Maestro',    time: '75s'  },
 ]
 
-// Voice mode only works reliably in Chrome-based browsers
 const CHROME =
   typeof navigator !== 'undefined' &&
   /Chrome/.test(navigator.userAgent) &&
@@ -36,6 +35,11 @@ export default function Home() {
     setDefinitionLang, toggleSpeech, setInputMode,
   } = useSettingsStore()
   const [level, setLevel] = useState<Level | null>(null)
+
+  const { data: leaderboard } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: gameApi.getLeaderboard,
+  })
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: () => gameApi.startSession({ level: level! }),
@@ -78,7 +82,6 @@ export default function Home() {
         <div className={styles.settingsPanel}>
           <div className={styles.settingsTitle}>Opciones</div>
 
-          {/* Definition language */}
           <div className={styles.settingRow}>
             <span className={styles.settingLabel}>Idioma de las definiciones</span>
             <div className={styles.toggle}>
@@ -97,7 +100,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Voice on/off */}
           <div className={styles.settingRow}>
             <span className={styles.settingLabel}>Voz de la definición</span>
             <button
@@ -108,7 +110,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Input mode */}
           <div className={styles.settingRow}>
             <div className={styles.settingLabelGroup}>
               <span className={styles.settingLabel}>Modo de respuesta</span>
@@ -129,7 +130,6 @@ export default function Home() {
                 className={`${styles.toggleBtn} ${inputMode === 'voice' ? styles.toggleActive : ''}`}
                 onClick={() => setInputMode('voice')}
                 disabled={!SPEECH_SUPPORTED}
-                title={!SPEECH_SUPPORTED ? 'Necesitas Chrome para usar el micrófono' : ''}
               >
                 🎤 Voz
               </button>
@@ -138,7 +138,7 @@ export default function Home() {
 
           {inputMode === 'voice' && SPEECH_SUPPORTED && (
             <div className={styles.voiceInfo}>
-              💡 Di la palabra en inglés cuando veas el botón del micrófono. La respuesta se enviará automáticamente.
+              💡 Di la palabra en inglés cuando veas el botón del micrófono.
             </div>
           )}
         </div>
@@ -163,6 +163,37 @@ export default function Home() {
               <span className={styles.statVal}>{user.totalCorrect}</span>
               <span className={styles.statLabel}>Aciertos totales</span>
             </div>
+          </div>
+        )}
+
+        {/* ── Leaderboard ── */}
+        {leaderboard && leaderboard.length > 0 && (
+          <div className={styles.leaderboard}>
+            <h2 className={styles.leaderboardTitle}>🏆 Top 10</h2>
+            <table className={styles.leaderboardTable}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Jugador</th>
+                  <th>Nivel</th>
+                  <th>✅</th>
+                  <th>❌</th>
+                  <th>⏱️</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboard.map((entry) => (
+                  <tr key={entry.rank} className={entry.displayName === user?.displayName ? styles.myRow : ''}>
+                    <td>{entry.rank}</td>
+                    <td>{entry.displayName}</td>
+                    <td>{entry.level}</td>
+                    <td>{entry.correctCount}</td>
+                    <td>{entry.wrongCount}</td>
+                    <td>{entry.timeUsedSec}s</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </main>

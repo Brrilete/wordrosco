@@ -278,3 +278,39 @@
   color: var(--text);
   line-height: 1.5;
 }
+.leaderboard {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.leaderboardTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+.leaderboardTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.leaderboardTable th,
+.leaderboardTable td {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.leaderboardTable th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.myRow td {
+  color: var(--accent);
+  font-weight: 600;
+}
