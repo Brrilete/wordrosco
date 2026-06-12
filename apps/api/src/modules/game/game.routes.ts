@@ -62,7 +62,7 @@ export async function gameRoutes(app: FastifyInstance) {
       SELECT DISTINCT ON (letter) id, letter, definition, answer, hint
       FROM words
       WHERE level = ${level}::"Level"
-        AND isActive = true
+       AND "isActive" = true
       ORDER BY letter, RANDOM()
     `
 
