@@ -1,0 +1,280 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.userArea { display: flex; align-items: center; gap: 16px; }
+.username { color: var(--muted); font-size: 14px; }
+.logout {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.logout:hover { border-color: var(--muted); color: var(--text); }
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px 48px;
+}
+
+.title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 5vw, 40px);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+/* ── Settings panel ── */
+.settingsPanel {
+  width: 100%;
+  max-width: 580px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 6px 0;
+  margin-bottom: 28px;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.settingRow:last-child { border-bottom: none; }
+
+.settingInfo { display: flex; flex-direction: column; gap: 2px; }
+.settingLabel { font-size: 14px; font-weight: 600; color: var(--text); }
+.settingDesc { font-size: 12px; color: var(--muted); }
+
+.toggleGroup { display: flex; gap: 6px; flex-shrink: 0; }
+.toggleBtn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.toggleBtn:hover { border-color: var(--accent); color: var(--text); }
+.toggleActive {
+  border-color: var(--accent) !important;
+  background: rgba(79,142,247,0.1) !important;
+  color: var(--accent) !important;
+  font-weight: 600;
+}
+
+.speechBtn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.speechBtn:hover { border-color: var(--accent); color: var(--text); }
+.speechOff { opacity: 0.5; }
+
+/* ── Level selector ── */
+.levelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 24px;
+}
+
+.levelCard {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.levelCard:hover { border-color: var(--accent); background: rgba(79,142,247,0.06); }
+.selected { border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(79,142,247,0.15); }
+
+.levelBadge {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+.levelName { font-size: 12px; color: var(--text); font-weight: 600; }
+.levelDesc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.levelTime { font-size: 11px; color: var(--border); margin-top: 4px; }
+
+.startBtn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 48px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.startBtn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,142,247,0.3); }
+.startBtn:disabled { opacity: 0.4; transform: none; cursor: not-allowed; }
+
+.error { color: var(--red); font-size: 13px; margin-bottom: 16px; }
+
+.stats { display: flex; gap: 40px; margin-top: 36px; }
+.stat { text-align: center; }
+.statVal {
+  display: block;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--accent);
+}
+.statLabel { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+@media(max-width: 500px) {
+  .settingRow { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .levelGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── Settings panel ── */
+.settingsPanel {
+  width: 100%;
+  max-width: 580px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.settingsTitle {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settingRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settingLabel {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.toggleBtn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.toggleBtn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.toggleActive {
+  border-color: var(--accent) !important;
+  background: rgba(79, 142, 247, 0.12) !important;
+  color: var(--accent) !important;
+  font-weight: 600;
+}
+
+.settingLabelGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.settingNote {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.voiceInfo {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(79, 142, 247, 0.08);
+  border: 1px solid rgba(79, 142, 247, 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}

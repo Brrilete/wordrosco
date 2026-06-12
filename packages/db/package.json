@@ -1,0 +1,19 @@
+{
+  "name": "@wordrosco/db",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "migrate": "prisma migrate dev",
+    "migrate:prod": "prisma migrate deploy",
+    "seed:all": "tsx src/seed_all.ts",
+    "studio": "prisma studio",
+    "generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0",
+    "tsx": "^4.0.0"
+  }
+}

@@ -1,0 +1,88 @@
+services:
+
+  # ── Database ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: wordrosco_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wordrosco
+      POSTGRES_PASSWORD: wordrosco_dev
+      POSTGRES_DB: wordrosco
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U wordrosco']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wordrosco_net
+
+  # ── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: wordrosco_redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - wordrosco_net
+
+  # ── Backend ─────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: wordrosco_api
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://wordrosco:wordrosco_dev@postgres:5432/wordrosco
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: change-this-in-production
+      JWT_EXPIRES_IN: 15m
+      PORT: 3000
+      NODE_ENV: production
+      CORS_ORIGIN: http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - wordrosco_net
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: wordrosco_web
+    restart: unless-stopped
+    ports:
+      - '5173:80'
+    depends_on:
+      - api
+    networks:
+      - wordrosco_net
+
+# ── Volumes ──────────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  redis_data:
+
+# ── Network ──────────────────────────────────────────────────────────────────
+networks:
+  wordrosco_net:
+    driver: bridge

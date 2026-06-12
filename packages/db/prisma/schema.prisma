@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────────
+
+enum Level {
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  TIMED_OUT
+}
+
+// ── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  displayName   String
+  currentLevel  Level    @default(A2)
+  totalGames    Int      @default(0)
+  totalCorrect  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Word {
+  id              String   @id @default(uuid())
+  letter          String   @db.Char(1)
+  definition      String
+  answer          String
+  hint            String
+  level           Level
+  difficultyScore Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  sessionAnswers SessionAnswer[]
+
+  @@index([level, letter])
+  @@index([level, isActive])
+  @@map("words")
+}
+
+model Session {
+  id           String        @id @default(uuid())
+  userId       String
+  level        Level
+  timeLimitSec Int
+  timeUsedSec  Int           @default(0)
+  correctCount Int           @default(0)
+  wrongCount   Int           @default(0)
+  passedCount  Int           @default(0)
+  status       SessionStatus @default(IN_PROGRESS)
+  startedAt    DateTime      @default(now())
+  endedAt      DateTime?
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers SessionAnswer[]
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model SessionAnswer {
+  id          String   @id @default(uuid())
+  sessionId   String
+  wordId      String
+  userAnswer  String?
+  isCorrect   Boolean  @default(false)
+  wasPassed   Boolean  @default(false)
+  timeTakenMs Int      @default(0)
+  answeredAt  DateTime @default(now())
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  word    Word    @relation(fields: [wordId], references: [id])
+
+  @@index([sessionId])
+  @@map("session_answers")
+}
