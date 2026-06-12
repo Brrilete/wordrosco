@@ -75,7 +75,7 @@ export async function gameRoutes(app: FastifyInstance) {
     }
 
     // Create session + all session_answer placeholders in one transaction
-    const session = await prisma.$transaction(async (tx:any) => {
+    const session = await prisma.$transaction(async (tx: any) => {
       const session = await tx.session.create({
         data: {
           userId,
@@ -85,7 +85,7 @@ export async function gameRoutes(app: FastifyInstance) {
       })
 
       await tx.sessionAnswer.createMany({
-        data: words.map((w:any) => ({
+        data: words.map((w: any) => ({
           sessionId: session.id,
           wordId: w.id,
           wasPassed: false,
@@ -291,7 +291,7 @@ export async function gameRoutes(app: FastifyInstance) {
       }),
     ])
 
-    const review = session.answers.map((a:any) => ({
+    const review = session.answers.map((a: any) => ({
       letter: a.word.letter,
       definition: a.word.definition,
       correctAnswer: a.word.answer,      // safe to reveal after the game ends
@@ -310,5 +310,34 @@ export async function gameRoutes(app: FastifyInstance) {
       score,
       review,
     })
+  })
+
+
+  // GET /game/leaderboard — top 10 players by correct answers then time
+  app.get('/leaderboard', async (request, reply) => {
+    const top = await prisma.session.findMany({
+      where: { status: 'COMPLETED' },
+      orderBy: [
+        { correctCount: 'desc' },
+        { timeUsedSec: 'asc' },
+      ],
+      take: 10,
+      include: {
+        user: {
+          select: { displayName: true },
+        },
+      },
+    })
+
+    return reply.send(
+      top.map((s, i) => ({
+        rank: i + 1,
+        displayName: s.user.displayName,
+        level: s.level,
+        correctCount: s.correctCount,
+        wrongCount: s.wrongCount,
+        timeUsedSec: s.timeUsedSec,
+      }))
+    )
   })
 }
