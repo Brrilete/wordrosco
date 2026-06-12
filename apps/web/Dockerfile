@@ -28,10 +28,9 @@ FROM nginx:alpine AS runner
 # Copy built files
 COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
 
-# Nginx config: redirect all routes to index.html (React Router)
-# and proxy /api to the backend container
+# Nginx config
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "envsubst '$$PORT' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && mv /tmp/default.conf /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
